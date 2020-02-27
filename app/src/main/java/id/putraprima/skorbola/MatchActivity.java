@@ -2,8 +2,11 @@ package id.putraprima.skorbola;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class MatchActivity extends AppCompatActivity {
@@ -11,8 +14,12 @@ public class MatchActivity extends AppCompatActivity {
     private TextView awayText;
     private TextView homeScore;
     private TextView awayScore;
+    private ImageView homelogo;
+    private ImageView awaylogo;
     int home;
     int away;
+
+    public static final String WIN_KEY="win";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,15 +31,21 @@ public class MatchActivity extends AppCompatActivity {
         awayText = findViewById(R.id.txt_away);
         homeScore = findViewById(R.id.score_home);
         awayScore = findViewById(R.id.score_away);
+        homelogo = findViewById(R.id.home_logo);
+        awaylogo = findViewById(R.id.away_logo);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             // TODO: display value here
-            String hometeam = extras.getString(MainActivity.HOMETEAM_KEY);
-            homeText.setText(hometeam);
+            Bundle extra = getIntent().getExtras();
+            Bitmap bmp = extra.getParcelable("homeImg");
+            Bitmap bmp2 = extra.getParcelable("awayImg");
 
-            String awayteam = extras.getString(MainActivity.AWAYTEAM_KEY);
-            awayText.setText(awayteam);
+            homelogo.setImageBitmap(bmp);
+            awaylogo.setImageBitmap(bmp2);
+            homeText.setText(extras.getString(MainActivity.HOMETEAM_KEY));
+            awayText.setText(extras.getString(MainActivity.AWAYTEAM_KEY));
+            //receive img
         }
     }
 
@@ -50,4 +63,16 @@ public class MatchActivity extends AppCompatActivity {
     }
 
     //3.Tombol Cek Result menghitung pemenang dari kedua tim dan mengirim nama pemenang ke ResultActivity, jika seri di kirim text "Draw"
+    public void handleResult(View view) {
+        Intent intent = new Intent(this, ResultActivity.class);
+
+        if(away > home){
+            intent.putExtra(WIN_KEY, "Selamat "+awayText.getText().toString());
+        }else if(away < home){
+            intent.putExtra(WIN_KEY, "Selamat "+homeText.getText().toString());
+        }else{
+            intent.putExtra(WIN_KEY, "Seri!");
+        }
+        startActivity(intent);
+    }
 }

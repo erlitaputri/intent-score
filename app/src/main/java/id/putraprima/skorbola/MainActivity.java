@@ -20,13 +20,14 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String HOMETEAM_KEY = "hometeam";
     public static final String AWAYTEAM_KEY = "awayteam";
+    public static final String HOME_IMG_KEY = "homeImg";
+    public static final String AWAY_IMG_KEY = "awayImg";
 
     private EditText hometeamInput;
     private EditText awayteamInput;
 
     private static final String TAG = MainActivity.class.getCanonicalName();
-    private static final int GALLERY_REQUEST_CODEHOME = 1;
-    private static final int GALLERY_REQUEST_CODEAWAY = 1;
+    private static final int GALLERY_REQUEST_CODEHOME = 1&2;
 
     private ImageView homelogo;
     private ImageView awaylogo;
@@ -35,60 +36,65 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //TODO
+        Bundle extras = getIntent().getExtras();
+        byte[] byteArray = extras.getByteArray("picture");
+
+        homelogo = findViewById(R.id.home_logo);
+        awaylogo = findViewById(R.id.away_logo);
+
         //Fitur Main Activity
         //1. Validasi Input Home Team
         hometeamInput = findViewById(R.id.home_team);
 
         //2. Validasi Input Away Team
         awayteamInput = findViewById(R.id.away_team);
-
     }
 
-    //3. Ganti Logo Home Team
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode == RESULT_CANCELED) {
+        if(resultCode == 0){
             return;
         }
-
-        if (requestCode == GALLERY_REQUEST_CODEHOME) {
-            if (data != null) {
-                try {
+        if(requestCode == 1){
+            if(data != null){
+                try{
                     Uri imageUri = data.getData();
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
                     homelogo.setImageBitmap(bitmap);
-                } catch (IOException e) {
+                }catch (IOException e){
                     Toast.makeText(this, "Can't load image", Toast.LENGTH_SHORT).show();
                     Log.e(TAG, e.getMessage());
                 }
             }
         }
-
-        if (requestCode == GALLERY_REQUEST_CODEAWAY) {
-            if (data != null) {
-                try {
+        if(requestCode == 2){
+            if(data != null){
+                try{
                     Uri imageUri = data.getData();
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageUri);
                     awaylogo.setImageBitmap(bitmap);
-                } catch (IOException e) {
+                }catch (IOException e){
                     Toast.makeText(this, "Can't load image", Toast.LENGTH_SHORT).show();
                     Log.e(TAG, e.getMessage());
                 }
             }
         }
     }
+
+    //3. Ganti Logo Home Team
     public void handleHomeLogo(View view) {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, GALLERY_REQUEST_CODEHOME);
+        startActivityForResult(intent, 1);
     }
 
     //4. Ganti Logo Away Team
     public void handleAwayLogo(View view) {
         Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(intent, GALLERY_REQUEST_CODEAWAY);
+        startActivityForResult(intent, 2);
     }
 
     //5. Next Button Pindah Ke MatchActivity
@@ -97,12 +103,25 @@ public class MainActivity extends AppCompatActivity {
         String hometeam = hometeamInput.getText().toString();
         String awayteam = awayteamInput.getText().toString();
 
-        Intent intent = new Intent(this, MatchActivity.class);
+        if((hometeam).equals("") || (awayteam).equals("")){
+            Toast.makeText(getApplicationContext(), "Isi nama Team!", Toast.LENGTH_SHORT).show();
+        }else{
+            Intent intent = new Intent(this, MatchActivity.class);
+            homelogo.buildDrawingCache();
+            awaylogo.buildDrawingCache();
 
-        intent.putExtra(HOMETEAM_KEY, hometeam);
-        intent.putExtra(AWAYTEAM_KEY, awayteam);
+            Bitmap homeTeamImage = homelogo.getDrawingCache();
+            Bitmap awayTeamImage = awaylogo.getDrawingCache();
 
-        startActivity(intent);
+            Bundle extras = new Bundle();
+            extras.putParcelable(HOME_IMG_KEY, homeTeamImage);
+            extras.putParcelable(AWAY_IMG_KEY, awayTeamImage);
+
+            intent.putExtras(extras);
+            intent.putExtra(HOMETEAM_KEY, hometeam);
+            intent.putExtra(HOMETEAM_KEY, awayteam);
+            startActivity(intent);
+        }
     }
 
 
