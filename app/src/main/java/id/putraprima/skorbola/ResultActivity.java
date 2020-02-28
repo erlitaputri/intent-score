@@ -7,18 +7,19 @@ import android.widget.TextView;
 
 public class ResultActivity extends AppCompatActivity {
 
-    private TextView winTeamText;
+    private TextView result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
 
-        winTeamText = findViewById(R.id.textView3);
+        result = findViewById(R.id.textView3);
 
         Bundle extras = getIntent().getExtras();
         if(extras != null){
-            winTeamText.setText(extras.getString(MatchActivity.WIN_KEY));
+            String r = getIntent().getExtras().getString("result");
+            result.setText("SELAMAT " + r);
         }
     }
 }

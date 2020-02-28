@@ -19,7 +19,7 @@ public class MatchActivity extends AppCompatActivity {
     int home;
     int away;
 
-    public static final String WIN_KEY="win";
+    public static final String RESULT_KEY="result";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,15 +64,18 @@ public class MatchActivity extends AppCompatActivity {
 
     //3.Tombol Cek Result menghitung pemenang dari kedua tim dan mengirim nama pemenang ke ResultActivity, jika seri di kirim text "Draw"
     public void handleResult(View view) {
-        Intent intent = new Intent(this, ResultActivity.class);
+        String result = null;
 
         if(away > home){
-            intent.putExtra(WIN_KEY, "Selamat "+awayText.getText().toString());
+            result = awayText.getText().toString();
+
         }else if(away < home){
-            intent.putExtra(WIN_KEY, "Selamat "+homeText.getText().toString());
+            result = homeText.getText().toString();
         }else{
-            intent.putExtra(WIN_KEY, "Seri!");
+            result = "DRAW";
         }
+        Intent intent = new Intent(this, ResultActivity.class);
+        intent.putExtra(RESULT_KEY, result);
         startActivity(intent);
     }
 }

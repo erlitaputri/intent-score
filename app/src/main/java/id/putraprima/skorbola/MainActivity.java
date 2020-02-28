@@ -27,7 +27,8 @@ public class MainActivity extends AppCompatActivity {
     private EditText awayteamInput;
 
     private static final String TAG = MainActivity.class.getCanonicalName();
-    private static final int GALLERY_REQUEST_CODEHOME = 1&2;
+    private static final int GALLERY_REQUEST_CODEHOME = 1;
+    private static final int GALLERY_REQUEST_CODEAWAY = 2;
 
     private ImageView homelogo;
     private ImageView awaylogo;
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
             intent.putExtras(extras);
             intent.putExtra(HOMETEAM_KEY, hometeam);
-            intent.putExtra(HOMETEAM_KEY, awayteam);
+            intent.putExtra(AWAYTEAM_KEY, awayteam);
             startActivity(intent);
         }
     }
